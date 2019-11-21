@@ -4,6 +4,9 @@ import eventlet
 import eventlet.wsgi #flask uses it, makes it secure
 import datetime
 import os
+
+import subprocess
+import math
 #import numpy as np
 #from scipy.io.wavfile import read, write
 
@@ -135,3 +138,4 @@ def convert_file_to_wav(byteArr, deviceName):
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=8090) #we definately need this
     #0.0.0.0 means listening to any device that submits to that port
+

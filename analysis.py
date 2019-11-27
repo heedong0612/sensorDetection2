@@ -81,11 +81,41 @@ def generate_array_of_inputs_per_windowSize2( cap):
         if math.floor(float(pkt.time)) < 60:
             inputsCount[math.floor(float(pkt.time))] += int(pkt.length)
     return inputsCount
+    
+# normalize arr
+def normalizeArr(arr: list):
+    norm_arr = []
+
+    arrSize = 0
+    #count up all the bytes 
+    for byteSize in arr:
+        arrSize += byteSize
+    
+    #divide each element in array by the size
+    for i in range(len(arr)):
+        norm_arr.append(arr[i] / arrSize)
+
+    return norm_arr
+        
+
+ # later, one byte array will be from a .wav file, and the other one from pcap file       
+def compareByteArrays(arr1: list, arr2: list, threshold: float) -> bool :
+    
+    # normalize the given byte arrays
+    norm_arr1 = normalizeArr(arr1)
+    norm_arr2 = normalizeArr(arr2)
+
+    # compare the arrays considering the threshold (for now 1.0)
+    # returns true if all byteSize in arrays are "close enough"
+    for i in range(len(arr1)):
+        if (abs(arr1[i] - arr2[i]) > threshold) :
+            return False
+    return True
 
 def main():
     # jerWav = generate_array_of_byte_in_video('jeremyRecording.wav') # attacker package
     #   attcap = pyshark.FileCapture(attackerCap,only_summaries=True,keep_packets = False)
-
+    
     attcap = pyshark.FileCapture('Test1=10,20,30,40,50,60.pcapng',only_summaries=True,keep_packets = False)
     attarr2 = generate_array_of_inputs_per_windowSize2(attcap) # protector wav
 
@@ -101,7 +131,12 @@ def main():
     
     print("jojoArr : \n")
     print(jojoArr)
+    print("hi")
 
-
+    if (compareByteArrays(attarr2, jojoArr, 1.0)):
+        print("they are similar! They might be spying..")
+    else :
+        print("they aren't similar!")
+        
 if __name__ == '__main__':
     main()
